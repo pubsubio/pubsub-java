@@ -21,7 +21,6 @@ package pubsub.io.java;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
@@ -32,13 +31,13 @@ import org.json.JSONObject;
 
 /**
  * 
- * @author Andreas Göransson
+ * @author Andreas Goransson
  * 
  */
 public class Pubsub {
 
 	private static final String DEBUGTAG = "::pubsub-java:::";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	private String mHost;
 	private String mPort;
@@ -56,7 +55,6 @@ public class Pubsub {
 	private Vector PubsubListeners;
 
 	public Pubsub() {
-		System.out.println("HILVITE");
 		PubsubListeners = new Vector();
 		callbacks = new HashMap<Integer, String>();
 	}
@@ -113,8 +111,6 @@ public class Pubsub {
 			if (DEBUG)
 				System.out.println(DEBUGTAG + "Pubsub.io already connected, ignoring");
 		}
-
-		System.out.println("hej:   t:" + (t == null ? "null" : "ok"));
 	}
 
 	/**
@@ -174,8 +170,6 @@ public class Pubsub {
 	 * @param doc
 	 */
 	public void publish(JSONObject json_doc) {
-		System.out.println("t:" + (t == null ? "null" : "ok") + " json_doc:"
-				+ (json_doc == null ? "null" : "ok"));
 		try {
 			t.write(PubsubParser.publish(json_doc).getBytes());
 		} catch (JSONException e) {
@@ -222,7 +216,6 @@ public class Pubsub {
 		private final OutputStream mOutputStream;
 
 		public PubsubComm(Socket socket) {
-			System.out.println("pubsubcomm");
 			mSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
@@ -349,14 +342,16 @@ public class Pubsub {
 			}
 
 			int callback_id = -1;
+			JSONObject doc = null;
 			try {
 				callback_id = json_obj.getInt("id");
+				doc = json_obj.getJSONObject("doc");
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 
-			if (json_obj != null)
-				createWebSocketEvent(PubsubEvent.ON_MESSAGE, json_obj, callback_id);
+			if (doc != null)
+				createWebSocketEvent(PubsubEvent.ON_MESSAGE, doc, callback_id);
 		}
 
 		/**

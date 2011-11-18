@@ -76,39 +76,45 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 		JLabel lblNewLabel_1 = new JLabel("Send:");
 
 		JLabel lblNewLabel = new JLabel("Recieved:");
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblNewLabel_1)
-					.addContainerGap(256, Short.MAX_VALUE))
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(240, Short.MAX_VALUE)
-					.addComponent(lblNewLabel)
-					.addContainerGap())
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
-						.addComponent(panel, GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE))
-					.addGap(16))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblNewLabel_1)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 113, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 214, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addComponent(lblNewLabel)
-					.addGap(199))
-		);
-		
-				mJTextArea = new JTextArea();
-				scrollPane.setViewportView(mJTextArea);
+		gl_contentPane.setHorizontalGroup(gl_contentPane
+				.createParallelGroup(Alignment.TRAILING)
+				.addGroup(
+						gl_contentPane.createSequentialGroup().addComponent(lblNewLabel_1)
+								.addContainerGap(256, Short.MAX_VALUE))
+				.addGroup(
+						gl_contentPane.createSequentialGroup()
+								.addContainerGap(240, Short.MAX_VALUE)
+								.addComponent(lblNewLabel).addContainerGap())
+				.addGroup(
+						gl_contentPane
+								.createSequentialGroup()
+								.addGroup(
+										gl_contentPane
+												.createParallelGroup(Alignment.TRAILING)
+												.addComponent(scrollPane, Alignment.LEADING,
+														GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+												.addComponent(panel, GroupLayout.DEFAULT_SIZE, 282,
+														Short.MAX_VALUE)).addGap(16)));
+		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(
+				Alignment.LEADING).addGroup(
+				gl_contentPane
+						.createSequentialGroup()
+						.addComponent(lblNewLabel_1)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 113,
+								GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 214,
+								GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED,
+								GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(lblNewLabel).addGap(199)));
+
+		mJTextArea = new JTextArea();
+		scrollPane.setViewportView(mJTextArea);
 
 		JButton btnNewButton = new JButton("Button 1");
 		btnNewButton.addActionListener(this);
@@ -199,9 +205,23 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 
 	@Override
 	public void onMessage(int callback_id, JSONObject doc) {
-		if (callback_id == subscription_all)
-			mJTextArea.append(doc.toString());
-		mJTextArea.append("\n");
+		if (callback_id == subscription_all) {
+
+			try {
+				String value = doc.getString("value");
+				mJTextArea.append(value);
+				mJTextArea.append("\n");
+			} catch (JSONException e) {
+				try {
+					int val = doc.getInt("value");
+					mJTextArea.append("" + val);
+					mJTextArea.append("\n");
+				} catch (JSONException e1) {
+					e.printStackTrace();
+					e1.printStackTrace();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -210,8 +230,8 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 	}
 
 	private void subscribe() {
-		JSONObject doc = new JSONObject();
-		subscription_all = mPubsub.subscribe(doc, "all");
+		JSONObject filter = new JSONObject();
+		subscription_all = mPubsub.subscribe(filter, "all");
 	}
 
 	private void unsubscribe() {
