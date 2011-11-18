@@ -1,12 +1,14 @@
 # pubsub-java
 
-## Requirements
-
-* TODO (none for now, includes the implementation by Douglas Crockford)
-
 ## Installation
 
-* TODO bullet list for installing the android library in Eclipse
+1. Download the [pubsub-java.jar](https://github.com/downloads/pubsubio/pubsub-java/pubsub-java.jar) file to your computer
+2. Create a new **Java project**
+3. Add a new folder in your Java project called **libs**
+4. Copy the downloaded jar file (see #1) into the new folder, **project/libs**
+5. Inside Eclipse, find the *Package Explorer*.
+6. Expand your Java project, so that the libs folder is opened.
+7. *Right-click* the pubsub-java.jar file and select **Add to Buildpath**
 
 ## Getting started with Pubsub.io for Java w. Swing
 
