@@ -25,7 +25,7 @@
 
 **Subscribe**
 
-*It's important that all subscription messages be sent in the onOpen method of the PubsubListener!**
+*It's important that all subscription messages be sent in the onOpen method of the PubsubListener!*
 
 ``` java
 	@Override
