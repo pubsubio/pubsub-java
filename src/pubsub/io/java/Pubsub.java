@@ -38,7 +38,7 @@ import org.json.JSONObject;
 public class Pubsub {
 
 	private static final String DEBUGTAG = "::pubsub-java:::";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	private String mHost;
 	private String mPort;
@@ -56,15 +56,16 @@ public class Pubsub {
 	private Vector PubsubListeners;
 
 	public Pubsub() {
+		System.out.println("HILVITE");
 		PubsubListeners = new Vector();
+		callbacks = new HashMap<Integer, String>();
 	}
 
 	/**
 	 * Connect to the default sub at hub.pubsub.io.
 	 */
 	public void connect() {
-		// connect("hub.pubsub.io", "10547", "/");
-		connect("79.125.4.43", "10547", "");
+		connect("");
 	}
 
 	/**
@@ -73,7 +74,6 @@ public class Pubsub {
 	 * @param sub
 	 */
 	public void connect(String sub) {
-		// connect("hub.pubsub.io", "10547", sub);
 		connect("79.125.4.43", "10547", sub);
 	}
 
@@ -85,8 +85,8 @@ public class Pubsub {
 	 */
 	public void connect(String host, String port, String sub) {
 		if (DEBUG)
-			System.out.println(DEBUGTAG + "connect( " + host + ":" + port + "/"
-					+ sub + " )");
+			System.out.println(DEBUGTAG + "connect( " + host + ":" + port + "/" + sub
+					+ " )");
 
 		mHost = host;
 		mPort = port;
@@ -111,9 +111,10 @@ public class Pubsub {
 			}
 		} else {
 			if (DEBUG)
-				System.out.println(DEBUGTAG
-						+ "Pubsub.io already connected, ignoring");
+				System.out.println(DEBUGTAG + "Pubsub.io already connected, ignoring");
 		}
+
+		System.out.println("hej:   t:" + (t == null ? "null" : "ok"));
 	}
 
 	/**
@@ -130,9 +131,9 @@ public class Pubsub {
 	}
 
 	/**
-	 * Subscribe to a filter, with a specified handler_callback, on the
-	 * connected sub. The handler_callback should be a declared constant, and it
-	 * should be used in the Handler of your activity!
+	 * Subscribe to a filter, with a specified handler_callback, on the connected
+	 * sub. The handler_callback should be a declared constant, and it should be
+	 * used in the Handler of your activity!
 	 * 
 	 * @param json_filter
 	 * @param handler_callback
@@ -173,6 +174,8 @@ public class Pubsub {
 	 * @param doc
 	 */
 	public void publish(JSONObject json_doc) {
+		System.out.println("t:" + (t == null ? "null" : "ok") + " json_doc:"
+				+ (json_doc == null ? "null" : "ok"));
 		try {
 			t.write(PubsubParser.publish(json_doc).getBytes());
 		} catch (JSONException e) {
@@ -187,7 +190,7 @@ public class Pubsub {
 
 	private boolean hasInternet() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -219,6 +222,7 @@ public class Pubsub {
 		private final OutputStream mOutputStream;
 
 		public PubsubComm(Socket socket) {
+			System.out.println("pubsubcomm");
 			mSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
@@ -305,15 +309,14 @@ public class Pubsub {
 						while (hasNext(mStringBuffer)) {
 							// Get the next JSONObject
 							int[] startAndStop = getNext(mStringBuffer);
-							String next = mStringBuffer.substring(
-									startAndStop[0], startAndStop[1]);
+							String next = mStringBuffer.substring(startAndStop[0],
+									startAndStop[1]);
 
 							// Process the JSON message
 							process(next);
 
 							// Delete the selected characters from the buffer.
-							mStringBuffer.delete(startAndStop[0],
-									startAndStop[1]);
+							mStringBuffer.delete(startAndStop[0], startAndStop[1]);
 						}
 					}
 				} catch (IOException e) {
@@ -353,8 +356,7 @@ public class Pubsub {
 			}
 
 			if (json_obj != null)
-				createWebSocketEvent(PubsubEvent.ON_MESSAGE, json_obj,
-						callback_id);
+				createWebSocketEvent(PubsubEvent.ON_MESSAGE, json_obj, callback_id);
 		}
 
 		/**
@@ -423,7 +425,7 @@ public class Pubsub {
 		 * Write to the connected OutStream.
 		 * 
 		 * @param buffer
-		 *            The bytes to write
+		 *          The bytes to write
 		 */
 		public void write(byte[] buffer) {
 			try {
@@ -457,8 +459,8 @@ public class Pubsub {
 		}
 
 		/**
-		 * This adds the required header and footer for the package, without
-		 * them the hub won't recognize the message.
+		 * This adds the required header and footer for the package, without them
+		 * the hub won't recognize the message.
 		 * 
 		 * @param buffer
 		 * @return

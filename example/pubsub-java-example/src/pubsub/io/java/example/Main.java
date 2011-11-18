@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import pubsub.io.java.Pubsub;
 import pubsub.io.java.PubsubListener;
+import javax.swing.JScrollPane;
 
 public class Main extends JFrame implements ActionListener, ChangeListener,
 		PubsubListener {
@@ -30,6 +31,10 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 	private JPanel contentPane;
 
 	private Pubsub mPubsub;
+
+	private int subscription_all = -1;
+
+	private JTextArea mJTextArea;
 
 	/**
 	 * Launch the application.
@@ -48,13 +53,17 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 		});
 	}
 
+	private void connect() {
+		mPubsub = new Pubsub();
+		mPubsub.addPubsubListener(this);
+		mPubsub.connect("java");
+	}
+
 	/**
 	 * Create the frame.
 	 */
 	public Main() {
-		mPubsub = new Pubsub();
-		mPubsub.addPubsubListener(this);
-		mPubsub.connect("java");
+		connect();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 310, 400);
@@ -67,53 +76,39 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 		JLabel lblNewLabel_1 = new JLabel("Send:");
 
 		JLabel lblNewLabel = new JLabel("Recieved:");
-
-		JTextArea textArea = new JTextArea();
+		
+		JScrollPane scrollPane = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane
-				.setHorizontalGroup(gl_contentPane
-						.createParallelGroup(Alignment.LEADING)
-						.addGroup(
-								gl_contentPane.createSequentialGroup()
-										.addComponent(lblNewLabel_1)
-										.addContainerGap(214, Short.MAX_VALUE))
-						.addGroup(
-								gl_contentPane.createSequentialGroup()
-										.addComponent(lblNewLabel)
-										.addContainerGap())
-						.addGroup(
-								Alignment.TRAILING,
-								gl_contentPane
-										.createSequentialGroup()
-										.addGroup(
-												gl_contentPane
-														.createParallelGroup(
-																Alignment.TRAILING)
-														.addComponent(
-																textArea,
-																Alignment.LEADING,
-																GroupLayout.DEFAULT_SIZE,
-																282,
-																Short.MAX_VALUE)
-														.addComponent(
-																panel,
-																GroupLayout.DEFAULT_SIZE,
-																282,
-																Short.MAX_VALUE))
-										.addGap(16)));
-		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(
-				Alignment.LEADING).addGroup(
-				gl_contentPane
-						.createSequentialGroup()
-						.addComponent(lblNewLabel_1)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 113,
-								GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(lblNewLabel)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(textArea, GroupLayout.DEFAULT_SIZE, 180,
-								Short.MAX_VALUE).addContainerGap()));
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblNewLabel_1)
+					.addContainerGap(256, Short.MAX_VALUE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap(240, Short.MAX_VALUE)
+					.addComponent(lblNewLabel)
+					.addContainerGap())
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+						.addComponent(panel, GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE))
+					.addGap(16))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblNewLabel_1)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 113, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 214, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(lblNewLabel)
+					.addGap(199))
+		);
+		
+				mJTextArea = new JTextArea();
+				scrollPane.setViewportView(mJTextArea);
 
 		JButton btnNewButton = new JButton("Button 1");
 		btnNewButton.addActionListener(this);
@@ -126,41 +121,34 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 
 		JComboBox comboBox = new JComboBox();
 		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(gl_panel
-				.createParallelGroup(Alignment.LEADING)
+		gl_panel
+				.setHorizontalGroup(gl_panel
+						.createParallelGroup(Alignment.LEADING)
+						.addGroup(
+								gl_panel
+										.createSequentialGroup()
+										.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE,
+												138, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED, 8,
+												Short.MAX_VALUE)
+										.addComponent(btnButton, GroupLayout.PREFERRED_SIZE, 138,
+												GroupLayout.PREFERRED_SIZE))
+						.addComponent(slider, GroupLayout.DEFAULT_SIZE, 284,
+								Short.MAX_VALUE)
+						.addComponent(comboBox, Alignment.TRAILING, 0, 298, Short.MAX_VALUE));
+		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(
-						gl_panel.createSequentialGroup()
-								.addComponent(btnNewButton,
-										GroupLayout.PREFERRED_SIZE, 138,
-										GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED, 8,
-										Short.MAX_VALUE)
-								.addComponent(btnButton,
-										GroupLayout.PREFERRED_SIZE, 138,
-										GroupLayout.PREFERRED_SIZE))
-				.addComponent(slider, GroupLayout.DEFAULT_SIZE, 284,
-						Short.MAX_VALUE)
-				.addComponent(comboBox, Alignment.TRAILING, 0, 298,
-						Short.MAX_VALUE));
-		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(
-				Alignment.LEADING)
-				.addGroup(
-						gl_panel.createSequentialGroup()
+						gl_panel
+								.createSequentialGroup()
 								.addGroup(
-										gl_panel.createParallelGroup(
-												Alignment.BASELINE)
-												.addComponent(btnNewButton)
-												.addComponent(btnButton))
+										gl_panel.createParallelGroup(Alignment.BASELINE)
+												.addComponent(btnNewButton).addComponent(btnButton))
 								.addGap(18)
-								.addComponent(slider,
-										GroupLayout.PREFERRED_SIZE,
-										GroupLayout.DEFAULT_SIZE,
-										GroupLayout.PREFERRED_SIZE)
+								.addComponent(slider, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addGap(18)
-								.addComponent(comboBox,
-										GroupLayout.PREFERRED_SIZE,
-										GroupLayout.DEFAULT_SIZE,
-										GroupLayout.PREFERRED_SIZE)
+								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addContainerGap(39, Short.MAX_VALUE)));
 		panel.setLayout(gl_panel);
 		contentPane.setLayout(gl_contentPane);
@@ -200,8 +188,7 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 
 	@Override
 	public void onClose() {
-		// TODO Auto-generated method stub
-
+		unsubscribe();
 	}
 
 	@Override
@@ -211,13 +198,23 @@ public class Main extends JFrame implements ActionListener, ChangeListener,
 	}
 
 	@Override
-	public void onMessage(int arg0, JSONObject arg1) {
-		System.out.println(arg1);
+	public void onMessage(int callback_id, JSONObject doc) {
+		if (callback_id == subscription_all)
+			mJTextArea.append(doc.toString());
+		mJTextArea.append("\n");
 	}
 
 	@Override
 	public void onOpen() {
-		// TODO Auto-generated method stub
+		subscribe();
+	}
 
+	private void subscribe() {
+		JSONObject doc = new JSONObject();
+		subscription_all = mPubsub.subscribe(doc, "all");
+	}
+
+	private void unsubscribe() {
+		mPubsub.unsubscribe(subscription_all);
 	}
 }
